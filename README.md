@@ -75,7 +75,7 @@ Tab Out Mission does not send your tabs, notes, or saved items to a server. The 
 
 ## Acknowledgements
 
-Tab Out Mission is built on top of Zara's original Tab Out extension, which focused on two core blocks: open tabs and saved-for-later tabs.
+Tab Out Mission is built on top of [Zara's original Tab Out extension](https://github.com/zarazhangrui/tab-out), which focused on two core blocks: open tabs and saved-for-later tabs.
 
 This version extends that foundation with a mission-oriented workflow, Quick Notes, and a more personal new-tab operating surface.
 
