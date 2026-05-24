@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Out Mission</title>
+
+  <!-- Variant A · Nuri redesign — Fraunces (display) + Inter (sans) + JetBrains Mono (mono).
+       Newsreader + DM Sans kept temporarily so any legacy class still has a fallback. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,200;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================================================================
+     TOP META STRIP — Variant A · Nuri layout.
+       Row 1: title (left) · week M T W T F S S markers (center) · clock (right)
+       Row 2: full-width year timeline with month labels and D120 ▼ pointer
+     The timeline acts as the page-divider; no hairline below it.
+     editorial.js renders #weekMarkers and #yearBarTrack live.
+     ================================================================ -->
+<div class="topbar" id="topbar">
+  <span class="topbar-title" id="topbarTitle">TAB OUT MISSION · №—</span>
+  <div class="topbar-week" aria-label="Week progress">
+    <span class="topbar-week-label">WEEK</span>
+    <div class="week-markers" id="weekMarkers"></div>
+    <span class="topbar-week-num" id="topbarWeek">W—</span>
+  </div>
+  <button class="topbar-mode-toggle" id="topbarModeToggle" type="button" aria-pressed="true" title="Toggle focus blur (currently on)">
+    <span class="mode-toggle-label" id="modeToggleLabel">FOCUS</span>
+  </button>
+</div>
+
+<div class="year-bar" id="yearBar" aria-label="Day in year">
+  <div class="year-bar-track" id="yearBarTrack"></div>
+  <div class="year-bar-pointer" id="yearBarPointer">
+    <span class="year-bar-pointer-label" id="yearBarPointerLabel">D—</span>
+    <span class="year-bar-pointer-arrow">▼</span>
+  </div>
+  <!-- Month labels are populated by editorial.js so each label's left
+       position matches its actual day-of-year start (Feb=32, Mar=60…),
+       not equal flex slots. Otherwise Nov-Dec ends up looking too wide. -->
+  <div class="year-months" id="yearMonths"></div>
+</div>
+
+<!-- Hidden compat: app.js still renders into #morseWeek / #morseYear / #topbarDate / #topbarDay; we no longer show them. -->
+<div hidden>
+  <div id="morseWeek"></div>
+  <div id="morseYear"></div>
+  <span id="topbarDate"></span>
+  <span id="topbarDay"></span>
+</div>
+
+<div class="container">
+
+
+
+  <!-- ================================================================
+       HERO HEADER — Variant A · Nuri stack:
+         · time (HH:MM with :SS small/raised)
+         · meta strip (tabs open · duplicates · sunset)
+         · full-width search bar with SEARCH / prompt
+       ================================================================ -->
+  <header class="hero">
+    <div class="hero-time" id="heroTime" aria-label="Current time">
+      <span class="hero-time-main" id="heroTimeMain">—</span><span class="hero-time-sec" id="heroTimeSec">:—</span>
+    </div>
+    <!-- Greeting is hidden — app.js still writes "Good afternoon" into
+         #greeting, but it's display:none so the visual stays clean. -->
+    <h1 id="greeting" hidden></h1>
+
+    <div class="hello-meta" aria-label="Status">
+      <span id="statTabs">— tabs open</span>
+      <span class="hello-sep">·</span>
+      <span id="statDupes">0 duplicates flagged</span>
+      <span class="hello-sep">·</span>
+      <span id="statSunset">sunset 19:42</span>
+    </div>
+
+    <form class="top-search" id="topSearchForm">
+      <span class="search-prompt">SEARCH /</span>
+      <input
+        type="text"
+        class="top-search-input"
+        id="topSearchInput"
+        placeholder="Type a URL, search the web, or summon a saved mission…"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Search or enter URL, slash to focus"
+      >
+    </form>
+  </header>
+
+  <!-- ================================================================
+       TAB OUT DUPES BANNER — appears when you have extra Tab Out tabs open
+       Hidden by default; app.js shows it when dupeTabOutCount > 1
+       ================================================================ -->
+  <div class="tab-cleanup-banner" id="tabOutDupeBanner" style="display:none">
+    <div class="tab-cleanup-left">
+      <div class="tab-cleanup-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+        </svg>
+      </div>
+      <div class="tab-cleanup-text">
+        You have <strong id="tabOutDupeCount"></strong> Tab Out tabs open. Keep just this one?
+      </div>
+    </div>
+    <button class="tab-cleanup-btn" data-action="close-tabout-dupes">Close extras</button>
+  </div>
+
+  <!-- ================================================================
+       MISSION ROW — same two-column shape as the open-tabs row below.
+       Left:  the active mission (drop zone or active card)
+       Right: the saved-missions sidebar (parked missions you can
+              restore later). Hidden when there are no saved missions.
+       ================================================================ -->
+  <!-- mission-column wraps mission-section + quick-notes so they share the
+       same width on the left, with the saved-missions column on the right. -->
+  <div class="mission-row" id="missionRow">
+    <div class="mission-column">
+      <div class="mission-section" id="missionSection"></div>
+      <div class="quick-notes-row focus-target" id="quickNotesSection"></div>
+    </div>
+    <div class="saved-missions-column focus-target" id="savedMissionsColumn" style="display:none"></div>
+  </div>
+
+  <!-- ================================================================
+       MAIN CONTENT AREA — two-column layout
+       Left: open tabs (domain/mission cards)
+       Right: saved for later checklist
+       The right column only renders when it has items (JS controls this)
+       ================================================================ -->
+  <div class="dashboard-columns" id="dashboardColumns">
+
+    <!-- LEFT COLUMN: Open tabs -->
+    <div class="active-section focus-target" id="openTabsSection" style="display:none">
+      <div class="section-header">
+        <h2 id="openTabsSectionTitle">Right now</h2>
+        <div class="section-line"></div>
+        <div class="section-count" id="openTabsSectionCount"></div>
+      </div>
+      <div class="missions" id="openTabsMissions"></div>
+    </div>
+
+    <!-- RIGHT COLUMN: Saved for Later checklist -->
+    <div class="deferred-column focus-target" id="deferredColumn" style="display:none">
+      <div class="section-header">
+        <h2>Saved for later</h2>
+        <div class="section-line"></div>
+        <div class="section-count" id="deferredCount"></div>
+      </div>
+
+      <!-- Active checklist items — injected by renderDeferredList() in app.js -->
+      <div class="deferred-list" id="deferredList"></div>
+
+      <!-- Empty state — shown when no active deferred tabs -->
+      <div class="deferred-empty" id="deferredEmpty" style="display:none">
+        Nothing saved. Living in the moment.
+      </div>
+
+      <!-- Archive section — collapsed by default -->
+      <div class="deferred-archive" id="deferredArchive" style="display:none">
+        <button class="archive-toggle" id="archiveToggle">
+          <svg class="archive-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+          Archive
+          <span class="archive-count" id="archiveCount"></span>
+        </button>
+        <div class="archive-body" id="archiveBody" style="display:none">
+          <input type="text" class="archive-search" id="archiveSearch" placeholder="Search archived tabs...">
+          <div class="archive-list" id="archiveList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .dashboard-columns -->
+
+  <!-- ================================================================
+       FOOTER — global stats + refresh control
+       ================================================================ -->
+  <footer>
+    <div class="footer-stats">
+      <div class="stat">
+        <div class="stat-num" id="statTabs">—</div>
+        <div class="stat-label">Open tabs</div>
+      </div>
+    </div>
+    <div class="last-refresh">
+      <span style="color: var(--muted); font-size: 11px;"><a href="https://github.com/zarazhangrui/tab-out" target="_top" style="color: var(--muted); text-decoration: underline; text-underline-offset: 2px;">Tab Out</a> by <a href="https://x.com/zarazhangrui" target="_top" style="color: var(--muted); text-decoration: underline; text-underline-offset: 2px;">Zara</a></span>
+    </div>
+  </footer>
+
+</div><!-- end .container -->
+
+<!-- ================================================================
+     TOAST — floats above everything, used for action confirmations
+     Hidden by default via CSS (opacity:0, translateY)
+     ================================================================ -->
+<div class="toast" id="toast">
+  <!-- Checkmark circle icon (Heroicons outline) -->
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+  </svg>
+  <span id="toastText"></span>
+</div>
+
+<!-- Personal config (gitignored) — defines LOCAL_LANDING_PAGE_PATTERNS etc. -->
+<!-- If the file doesn't exist, that's fine — app.js uses sensible defaults. -->
+<script src="config.local.js" onerror="/* no personal config, that's fine */"></script>
+
+<!-- Main dashboard logic — loads last so the DOM is ready -->
+<script src="app.js"></script>
+
+<!-- Editorial bridge — fills in topbar (date/week/day/clock/issue №) and
+     paints favicon swatches with brand colors. Loaded after app.js. -->
+<script src="editorial.js"></script>
+</body>
+</html>

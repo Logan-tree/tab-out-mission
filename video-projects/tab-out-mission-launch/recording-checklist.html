@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab Out Mission Video Checklist</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f5f0;
+      --paper: #fffdf8;
+      --ink: #1e1c1a;
+      --muted: #77716a;
+      --line: #d8d0c3;
+      --accent: #5b36b8;
+      --accent-soft: #ece5ff;
+      --done: #4f8a5f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(920px, calc(100vw - 32px));
+      margin: 48px auto 64px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 48px rgba(42, 35, 24, 0.08);
+    }
+
+    header {
+      padding: 32px 36px 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 36px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .progress-wrap {
+      flex: 1 1 260px;
+    }
+
+    .progress-text {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progress {
+      height: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #f0ebe2;
+    }
+
+    .progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width 180ms ease;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fffaf2;
+      color: var(--ink);
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    section {
+      padding: 28px 36px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:last-child {
+      border-bottom: 0;
+      padding-bottom: 34px;
+    }
+
+    h2 {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 16px;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h2 span {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: none;
+      font-weight: 500;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 11px 0;
+      border-top: 1px solid rgba(216, 208, 195, 0.6);
+    }
+
+    .item:first-of-type {
+      border-top: 0;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 2px 0 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    label {
+      cursor: pointer;
+    }
+
+    .item.done label {
+      color: var(--done);
+    }
+
+    .script {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .script strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      main {
+        width: calc(100vw - 20px);
+        margin: 10px auto 28px;
+      }
+
+      header,
+      .toolbar,
+      section {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Tab Out Mission Video Checklist</h1>
+      <div class="meta">
+        <span>Target: 4-6 minutes full / 3 minutes cutdown</span>
+        <span>Mode: record while speaking</span>
+        <span>Format: short clips</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="progress-wrap">
+        <div class="progress-text" id="progressText">0 / 0 completed</div>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+      </div>
+      <button type="button" id="resetButton">Reset checks</button>
+    </div>
+
+    <section>
+      <h2>Prep <span>before recording</span></h2>
+      <div class="item"><input id="prep-1" type="checkbox"><label for="prep-1">Close unrelated notifications</label></div>
+      <div class="item"><input id="prep-2" type="checkbox"><label for="prep-2">Clean up desktop and sensitive browser content</label></div>
+      <div class="item"><input id="prep-3" type="checkbox"><label for="prep-3">Prepare Chrome native tab group examples, including an old unused group</label></div>
+      <div class="item"><input id="prep-4" type="checkbox"><label for="prep-4">Prepare 8-12 demo tabs across 3-4 domains</label></div>
+      <div class="item"><input id="prep-5" type="checkbox"><label for="prep-5">Prepare the Agatha Christie research example: Wikipedia, And Then There Were None, The Murder of Roger Ackroyd, and one extra list page</label></div>
+      <div class="item"><input id="prep-6" type="checkbox"><label for="prep-6">Prepare 2-3 Quick Notes examples, including “准备视频脚本”</label></div>
+      <div class="item"><input id="prep-7" type="checkbox"><label for="prep-7">Open Zara Zhang / original Tab Out reference if you want to show it briefly</label></div>
+      <div class="item"><input id="prep-8" type="checkbox"><label for="prep-8">Open Excalidraw if you want a transition board</label></div>
+      <div class="item"><input id="prep-9" type="checkbox"><label for="prep-9">Open Tab Out Mission</label></div>
+      <div class="item"><input id="prep-10" type="checkbox"><label for="prep-10">Confirm the screen recorder is capturing audio</label></div>
+      <div class="item"><input id="prep-11" type="checkbox"><label for="prep-11">Record a 10-second test clip</label></div>
+    </section>
+
+    <section>
+      <h2>Clips <span>record one idea per clip</span></h2>
+      <div class="item">
+        <input id="clip-1" type="checkbox">
+        <label for="clip-1">
+          Clip 1: 开场痛点，约 20-30 秒
+          <div class="script"><strong>Say:</strong> 最近做了一个 Chrome Extension，灵感来自 Zara。我推荐大家去看她 4 月份那个视频。我的问题是：浏览器工作时经常从一个页面跳到另一个页面，tabs 越开越多，最后不是网页太多，而是任务上下文乱掉了。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-2" type="checkbox">
+        <label for="clip-2">
+          Clip 2: Zara 的产品定位，约 40-50 秒
+          <div class="script"><strong>Show:</strong> 新建 Tab / 原版 Tab Out / Open Tabs 按 domain 分组。<br><strong>Say:</strong> Zara 的定位很清楚：这个工具就是让你能随时随地关掉已经打开的 tabs。因为每次你 Command + T 或点击加号要搜索新东西时，都会看到一个看板，提醒你现在到底开了哪些页面。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-3" type="checkbox">
+        <label for="clip-3">
+          Clip 3: Chrome 原生 Tab Group 为什么不够，约 45-60 秒
+          <div class="script"><strong>Show:</strong> 展示 Chrome 自带 Add Tab to Group、旧的 Groups、很久没打开的 Group。<br><strong>Say:</strong> Chrome Group 确实比收藏夹更像任务集合，因为打开 Group 会把所有页面展开；收藏夹更像一个 list，放进去就容易吃灰。但 Group 也会越建越多，最后变成另一种堆积。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-4" type="checkbox">
+        <label for="clip-4">
+          Clip 4: 第一个小改动，自动关闭多余 New Tab，约 20-30 秒
+          <div class="script"><strong>Show:</strong> 连续打开几个 new tabs，最终只保留一个 Tab Out Mission 页面。<br><strong>Say:</strong> 我第一个改动是去掉确认弹窗，因为我想不到为什么要保留两三个空的新标签页。所以它会自动帮我删掉多余的新标签页。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-5" type="checkbox">
+        <label for="clip-5">
+          Clip 5: 为什么要有 Mission Board，约 60-75 秒
+          <div class="script"><strong>Show:</strong> 紫色 Mission Board。<br><strong>Say:</strong> Zara 的版本更偏向帮你轻松清理 tabs，这点确实减负。但我的痛点是任务切换。我不是只在一个很垂直的领域里工作，我会在不同 tasks 之间来回切换，所以我需要更轻松地管理 tab 分组，并且让注意力回到当前任务上。我之前想过分析浏览历史，但后来发现复盘太晚了，我需要的是在过程中提醒自己：我现在到底在做什么 Mission。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-6" type="checkbox">
+        <label for="clip-6">
+          Clip 6: 时间区域和视觉 focus，约 25-35 秒
+          <div class="script"><strong>Show:</strong> Good Morning / 时间 / 星期与年份可视化。<br><strong>Say:</strong> 我把时间放在左上角，让视线集中在中间区域。星期和年份的可视化不是为了精确读日期，而是让我感受到自己在这一周、这一年里的位置。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-7" type="checkbox">
+        <label for="clip-7">
+          Clip 7: 从研究页面创建 Mission，约 50-70 秒
+          <div class="script"><strong>Show:</strong> 搜索 Agatha Christie，打开 Wikipedia、And Then There Were None、The Murder of Roger Ackroyd。回到 Tab Out Mission，把相关 tabs 加到 Mission。<br><strong>Say:</strong> 比如我想研究阿加莎从哪本书开始读。我打开几个相关页面后，可以把它们升级成一个 Mission，而不是让它们散落在浏览器里。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-8" type="checkbox">
+        <label for="clip-8">
+          Clip 8: 进行中动态添加新页面，约 35-45 秒
+          <div class="script"><strong>Show:</strong> 给 Mission 起名“挑选阿加莎小说”，打开一个新的相关页面，用快捷按钮加入当前 Mission。<br><strong>Say:</strong> 任务进行中，如果我又找到一个相关页面，不需要回到底部列表里找，直接一键加入当前 Mission。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-9" type="checkbox">
+        <label for="clip-9">
+          Clip 9: Saved Missions 和任务切换，约 35-45 秒
+          <div class="script"><strong>Show:</strong> Save for later，打开另一个 saved Mission，再切回来。<br><strong>Say:</strong> 如果我中途切换任务，当前 Mission 会被保存起来。之后点回来，它恢复的是任务上下文，而不是需要重新理解的一堆 tabs。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-10" type="checkbox">
+        <label for="clip-10">
+          Clip 10: Quick Notes 的低摩擦记录，约 40-50 秒
+          <div class="script"><strong>Show:</strong> 展开 Quick Notes，输入几个碎片想法。<br><strong>Say:</strong> 我做 Quick Notes 是因为很多想法只是一闪而过，打开 Apple Notes 还要起标题，很烦。放在这里的好处是，它会一直提醒我：这个想法要不要变成一个 Mission？</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-11" type="checkbox">
+        <label for="clip-11">
+          Clip 11: 把 Quick Note 升级为 Mission，约 50-70 秒
+          <div class="script"><strong>Show:</strong> 输入“准备视频脚本”，点击向上箭头升级，搜索“视频脚本怎么写”“storyboard 是什么”，把页面加入当前 Mission，确认 Quick Note 消失。<br><strong>Say:</strong> 如果一个想法值得做，就可以直接升级成 Mission。它不是普通备忘录，而是能进入行动状态的想法。</div>
+        </label>
+      </div>
+      <div class="item">
+        <input id="clip-12" type="checkbox">
+        <label for="clip-12">
+          Clip 12: Focus 模式和结尾提问，约 30-45 秒
+          <div class="script"><strong>Show:</strong> Mission Board 常亮，其他区域模糊；切换 focus 模式。<br><strong>Say:</strong> 我现在打开的 tabs 明显少了，因为我可以随时 trim down，也可以把相关页面归到一个 Mission。它不是复杂的 productivity app，而是把浏览器从信息堆变成任务工作台。你们平时是怎么管理 tabs 和临时想法的？</div>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Final Check <span>before editing</span></h2>
+      <div class="item"><input id="final-1" type="checkbox"><label for="final-1">Every clip has sound</label></div>
+      <div class="item"><input id="final-2" type="checkbox"><label for="final-2">Every clip has 1-2 seconds of padding at start and end</label></div>
+      <div class="item"><input id="final-3" type="checkbox"><label for="final-3">No private information is visible</label></div>
+      <div class="item"><input id="final-4" type="checkbox"><label for="final-4">No operation gets stuck for too long</label></div>
+      <div class="item"><input id="final-5" type="checkbox"><label for="final-5">Main features are shown</label></div>
+      <div class="item"><input id="final-6" type="checkbox"><label for="final-6">Full version is under 6 minutes, cutdown version is under 3 minutes</label></div>
+      <div class="item"><input id="final-7" type="checkbox"><label for="final-7">First 10 seconds clearly show the pain point</label></div>
+      <div class="item"><input id="final-8" type="checkbox"><label for="final-8">Ending includes a clear question</label></div>
+    </section>
+  </main>
+
+  <script>
+    const storageKey = "tab-out-mission-video-checklist-v1";
+    const boxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const resetButton = document.getElementById("resetButton");
+
+    function readState() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function writeState(state) {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function updateProgress() {
+      const completed = boxes.filter((box) => box.checked).length;
+      const total = boxes.length;
+      const percent = total ? Math.round((completed / total) * 100) : 0;
+      progressText.textContent = `${completed} / ${total} completed`;
+      progressBar.style.width = `${percent}%`;
+      boxes.forEach((box) => {
+        box.closest(".item").classList.toggle("done", box.checked);
+      });
+    }
+
+    function saveBox(box) {
+      const state = readState();
+      state[box.id] = box.checked;
+      writeState(state);
+      updateProgress();
+    }
+
+    const state = readState();
+    boxes.forEach((box) => {
+      box.checked = Boolean(state[box.id]);
+      box.addEventListener("change", () => saveBox(box));
+    });
+
+    resetButton.addEventListener("click", () => {
+      if (!confirm("Reset all checklist marks?")) return;
+      localStorage.removeItem(storageKey);
+      boxes.forEach((box) => {
+        box.checked = false;
+      });
+      updateProgress();
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
