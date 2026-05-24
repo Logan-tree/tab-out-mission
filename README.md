@@ -23,7 +23,7 @@ This project is based on Zara's original Tab Out extension. See [Acknowledgement
 - **Mission workflow** — move selected tabs into a focused mission so the current work context is explicit
 - **Quick Notes** — capture short mission ideas locally in the new-tab page
 - **Saved for later** — save individual tabs to a local checklist before closing them
-- **Duplicate detection** — identify repeated pages and close duplicates quickly
+- **New-tab cleanup** — keep one Tab Out Mission new tab and close any extra new-tab duplicates
 - **Cross-window tab jumping** — click a tab title to jump to it across Chrome windows
 - **Localhost grouping** — show port numbers for local development tabs
 - **Confetti and sound feedback** — closing tabs and completing missions gives lightweight visual feedback
