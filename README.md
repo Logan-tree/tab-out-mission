@@ -10,7 +10,7 @@ No server. No account. No external API calls. Just a local Chrome extension.
 
 ## Author
 
-Built by Longyue Cao / Logan-tree.
+Built by [Logan-tree](https://github.com/Logan-tree).
 
 This project is based on Zara's original Tab Out extension. See [Acknowledgements](#acknowledgements).
 
