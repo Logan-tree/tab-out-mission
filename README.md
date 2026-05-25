@@ -36,7 +36,7 @@ This project is based on Zara's original Tab Out extension. See [Acknowledgement
 **1. Clone the repo**
 
 ```bash
-git clone https://github.com/Logan-tree/tab-out-mission-longyue.git
+git clone https://github.com/Logan-tree/tab-out-mission.git
 ```
 
 **2. Load the Chrome extension**
